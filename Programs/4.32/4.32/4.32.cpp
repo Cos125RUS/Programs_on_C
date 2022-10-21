@@ -46,12 +46,14 @@ int main()
 
 bool test_polindrome(char text[], int size, int a)
 {
-    if (a == (size / 2))
+    if (a >= size)
         return true;
     else
     {
-        if (text[a] == text[size - 1 - a]) return test_polindrome(text, size, a + 1);
-        else return false;        
+        if (text[a] == text[size - 1]) 
+            return test_polindrome(text, size - 1, a + 1);
+        else 
+            return false;        
     }
 }
 
