@@ -7,22 +7,35 @@
 
 using namespace std;
 
+
 bool test_polindrome(char[], int, int);
+
+int string_length(char[], int);
 
 int main()
 {
     setlocale(LC_ALL, "Russian");
 
-    char text[5] = { 'r','a','d','a','r' };
+
+    const int length = 20;
+
+    char text[length];
+
+    cout << "Enter the text: ";
+    cin >> text;
+    cout << endl;
+
+    int high = string_length(text, length);
     
           
-    cout << test_polindrome(text, 5, 0);
+    if (test_polindrome(text, high, 0) == true) 
+        cout << "Text is polindrom!";
+    else
+        cout << "Text is not polindrom!";
+
     
 
-    char txt;
-    cout << "Enter text: ";
-    cin >> txt;
-    cout << "\n\ntxt: " << txt[2];
+    
 
 
 
@@ -40,4 +53,15 @@ bool test_polindrome(char text[], int size, int a)
         if (text[a] == text[size - 1 - a]) return test_polindrome(text, size, a + 1);
         else return false;        
     }
+}
+
+int string_length(char text[], int length)
+{
+    int count = 0;
+
+    for (int i = 0; i < length; i++)
+        if (text[i] != 0)
+            count++;
+        else
+            return count;
 }
