@@ -1,0 +1,28 @@
+﻿#include <iostream>
+#include <locale>
+#include <iomanip>
+#include <cmath>
+#include <cstdlib>
+#include <ctime>
+
+using namespace std;
+
+int main()
+{
+    setlocale(LC_ALL, "Russian");
+
+
+
+
+
+
+
+
+
+
+
+
+    cout << "\n\n\n\n\n\n\n\n\n\n";
+
+    return 0;
+}
