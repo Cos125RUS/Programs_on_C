@@ -8,11 +8,11 @@
 
 using namespace std;
 
-void shuffle(int[][13], int[], int[]);
+void shuffle(int[][13], int[], int[], int[][13]);
 void deal(const int[][13], const int[][13], const char* [], const char* []);
 int combinations(int[], int[], const char* []);
 void winner(int, int, int[], int[]);
-int replacing(int [][13], int, int[], int[], const char* [], int[][13]);
+void replacing(int[][13], int, int[], int[], const char* [], int[][13]);
 
 int main()
 {
@@ -33,8 +33,8 @@ int main()
 
 	srand(time(0));
 
-	shuffle(deck1, quality1, colour1);
-	shuffle(deck2, quality2, colour2);
+	shuffle(deck1, quality1, colour1, deck2);
+	shuffle(deck2, quality2, colour2, deck1);
 
 	deal(deck1, deck2, face, suit);
 
@@ -45,7 +45,8 @@ int main()
 
 	cout << endl << "\t\t\t\t";
 
-	player2 = replacing(deck2, player2, quality2, colour2, comb, deck1);
+	replacing(deck2, player2, quality2, colour2, comb, deck1);
+	player2 = combinations(quality2, colour2, comb);
 
 	cout << endl << endl;
 
@@ -59,7 +60,7 @@ int main()
 	return 0;
 }
 
-void shuffle(int wDeck[][13], int quality[], int colour[])
+void shuffle(int wDeck[][13], int quality[], int colour[], int opponent[][13])
 {
 	int row, column;
 
@@ -68,7 +69,7 @@ void shuffle(int wDeck[][13], int quality[], int colour[])
 		do {
 			row = rand() % 4;
 			column = rand() % 13;
-		} while (wDeck[row][column] != 0);
+		} while (wDeck[row][column] != 0 && opponent[row][column] != 0);
 		wDeck[row][column] = card;
 		++quality[column];
 		++colour[row];
@@ -181,42 +182,42 @@ bool high_card(int q1[], int q2[], int d)
 	}
 }
 
-int replacing(int deck[][13], int distribution, int quality[], int colour[], const char* comb[], int player[][13])
+void replacing(int deck[][13], int distribution, int quality[], int colour[], const char* comb[], int player[][13])
 {
-	int change[5] = { 0 };
+	int change[3] = { 0 };
 	int rows[3] = { 0 };
 	int columns[3] = { 0 };
 	int counter = 0;
 
 	if (distribution < 4 || distribution == 7)
-		for (int column = 0; column <= 12; column++)
-			if (quality[column] == 1)
-				for (int row = 0; row <= 3; row++)
-					if (deck[row][column] != 0)
-					{
-						change[counter] = deck[row][column];
-						rows[counter] = row;
-						columns[counter] = column;
-						counter++;
-						--quality[column];
-						--colour[row];
-					}
+		for (int column = 1; column <= 12; column++)
+			if (counter < 3)
+				if (quality[column] == 1)
+					for (int row = 0; row <= 3; row++)
+						if (deck[row][column] != 0)
+						{
+							change[counter] = deck[row][column];
+							rows[counter] = row;
+							columns[counter] = column;
+							counter++;
+							--quality[column];
+							--colour[row];
+						}
 
-	for (int i = 0; i < counter; i++)
-	{
-		int row, column;
-		do {
-			row = rand() % 4;
-			column = rand() % 13;
-		} while (deck[row][column] != 0 && player[row][column] != 0);
-		deck[row][column] = change[i];
-		++quality[column];
-		++colour[row];
-	}
-	
+
+	if (counter > 0)
+		for (int i = 0; i < counter; i++)
+		{
+			int row, column;
+			do {
+				row = rand() % 4;
+				column = rand() % 13;
+			} while (deck[row][column] != 0 && player[row][column] != 0);
+			deck[row][column] = change[i];
+			++quality[column];
+			++colour[row];
+		}
+
 	for (int i = 0; i < counter; i++)
 		deck[rows[i]][columns[i]] = 0;
-
-	distribution = combinations(quality, colour, comb);
-	return distribution;
 }
