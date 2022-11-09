@@ -23,36 +23,38 @@ int main()
 							"Восьмёрка", "Девятка", "Десятка", "Валет", "Дама", "Король" };
 	const char* comb[] = { "Старшая карта" ,"Пара", "Две пары", "Тройка", "Стрит", "Флэш", "Фулл-хаус", "Каре", "Стрит-флэш" };
 
-	int deck1[4][13] = { 0 };
-	int colour1[4] = { 0 };
-	int quality1[13] = { 0 };
+	int player[4][13] = { 0 };
+	int quality_player[13] = { 0 };
+	int colour_player[4] = { 0 };
 
-	int deck2[4][13] = { 0 };
-	int colour2[4] = { 0 };
-	int quality2[13] = { 0 };
+	int croupier[4][13] = { 0 };
+	int quality_croupier[13] = { 0 };
+	int colour_croupier[4] = { 0 };
+
+	int deck[4][13] = { 0 };
+
 
 	srand(time(0));
 
-	shuffle(deck1, quality1, colour1, deck2);
-	shuffle(deck2, quality2, colour2, deck1);
+	shuffle(player, quality_player, colour_player, deck);
+	shuffle(croupier, quality_croupier, colour_croupier, deck);
 
-	deal(deck1, deck2, face, suit);
+	deal(player, croupier, face, suit);
 
+	int estimation_player = combinations(quality_player, colour_player, comb);
+	int estimation_croupier = combinations(quality_croupier, colour_croupier, comb);
 	cout << endl << endl;
 
-	int player1 = combinations(quality1, colour1, comb);
-	int player2 = combinations(quality2, colour2, comb);
-
-	cout << endl << "\t\t\t\t";
-
-	replacing(deck2, player2, quality2, colour2, comb, deck1);
-	player2 = combinations(quality2, colour2, comb);
-
+	replacing(player, estimation_player, quality_player, colour_player, comb, deck);
+	replacing(croupier, estimation_croupier, quality_croupier, colour_croupier, comb, deck);
+	deal(player, croupier, face, suit);
+	estimation_player = combinations(quality_player, colour_player, comb);
+	estimation_croupier = combinations(quality_croupier, colour_croupier, comb);
 	cout << endl << endl;
 
-	deal(deck1, deck2, face, suit);
 
-	winner(player1, player2, quality1, quality2);
+	winner(estimation_player, estimation_croupier, quality_player, colour_croupier);
+
 
 
 	cout << "\n\n\n\n\n\n\n\n\n\n";
@@ -60,7 +62,7 @@ int main()
 	return 0;
 }
 
-void shuffle(int wDeck[][13], int quality[], int colour[], int opponent[][13])
+void shuffle(int distribution[][13], int quality[], int colour[], int deck[][13])
 {
 	int row, column;
 
@@ -69,8 +71,9 @@ void shuffle(int wDeck[][13], int quality[], int colour[], int opponent[][13])
 		do {
 			row = rand() % 4;
 			column = rand() % 13;
-		} while (wDeck[row][column] != 0 && opponent[row][column] != 0);
-		wDeck[row][column] = card;
+		} while (distribution[row][column] != 0 || deck[row][column] != 0);
+		distribution[row][column] = card;
+		deck[row][column] = card;
 		++quality[column];
 		++colour[row];
 	}
@@ -92,8 +95,8 @@ void deal(const int wDeck1[][13], const int wDeck2[][13], const char* wFace[], c
 					cout << setw(10) << setiosflags(ios::right) << wFace[column]
 					<< " масти " << setiosflags(ios::left) << wSuit[row] << endl;
 	}
+	cout << endl << endl;
 }
-
 
 int combinations(int quality[], int colour[], const char* comb[])
 {
@@ -145,7 +148,6 @@ void winner(int p1, int p2, int quality1[], int quality2[])
 bool high_card(int q1[], int q2[], int d)
 {
 	int x;
-
 	switch (d)
 	{
 	case 1:
@@ -169,7 +171,6 @@ bool high_card(int q1[], int q2[], int d)
 		break;
 	}
 
-
 	if (q1[0] == x && q2[0] == x);
 	else
 		if (q1[0] == x || q2[0] == x) return q1[0] > q2[0];
@@ -182,7 +183,7 @@ bool high_card(int q1[], int q2[], int d)
 	}
 }
 
-void replacing(int deck[][13], int distribution, int quality[], int colour[], const char* comb[], int player[][13])
+void replacing(int player[][13], int distribution, int quality[], int colour[], const char* comb[], int deck[][13])
 {
 	int change[3] = { 0 };
 	int rows[3] = { 0 };
@@ -194,16 +195,15 @@ void replacing(int deck[][13], int distribution, int quality[], int colour[], co
 			if (counter < 3)
 				if (quality[column] == 1)
 					for (int row = 0; row <= 3; row++)
-						if (deck[row][column] != 0)
+						if (player[row][column] != 0)
 						{
-							change[counter] = deck[row][column];
+							change[counter] = player[row][column];
 							rows[counter] = row;
 							columns[counter] = column;
 							counter++;
 							--quality[column];
 							--colour[row];
 						}
-
 
 	if (counter > 0)
 		for (int i = 0; i < counter; i++)
@@ -212,12 +212,12 @@ void replacing(int deck[][13], int distribution, int quality[], int colour[], co
 			do {
 				row = rand() % 4;
 				column = rand() % 13;
-			} while (deck[row][column] != 0 && player[row][column] != 0);
-			deck[row][column] = change[i];
+			} while (player[row][column] != 0 || deck[row][column] != 0);
+			player[row][column] = change[i];
 			++quality[column];
 			++colour[row];
 		}
 
 	for (int i = 0; i < counter; i++)
-		deck[rows[i]][columns[i]] = 0;
+		player[rows[i]][columns[i]] = 0;
 }
