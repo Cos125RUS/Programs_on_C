@@ -8,6 +8,8 @@
 
 using namespace std;
 
+bool draw = false;
+
 void shuffle(int[][13], int[], int[], int[][13]);
 void deal(const int[][13], const int[][13], const char* [], const char* []);
 int combinations(int[], int[], const char* []);
@@ -54,6 +56,8 @@ int main()
 		change_card(player, quality_player, colour_player, deck, face, suit);
 		//replacing(player, estimation_player, quality_player, colour_player, deck);
 		replacing(croupier, estimation_croupier, quality_croupier, colour_croupier, deck);
+		cout << endl << endl;
+		
 		deal(player, croupier, face, suit);
 		estimation_player = combinations(quality_player, colour_player, comb);
 		estimation_croupier = combinations(quality_croupier, colour_croupier, comb);
@@ -149,14 +153,21 @@ void winner(int p1, int p2, int quality1[], int quality2[])
 	else
 		if (p2 > p1) cout << "\n\n\t\t\tPlayer 2 win!";
 		else
-			if (high_card(quality1, quality2, p1)) cout << "\n\n\t\t\tPlayer 1 win!";
-			else cout << "\n\n\t\t\tPlayer 2 win!";
+			if (high_card(quality1, quality2, p1))
+			{
+				if (!draw) cout << "\n\n\t\t\tPlayer 1 win!";
+				else cout << "\n\n\t\t\tDrow!";
+			}
+			else
+			{
+				if (!draw) cout << "\n\n\t\t\tPlayer 2 win!";
+				else cout << "\n\n\t\t\tDrow!";
+			}
 }
 
 bool high_card(int q1[], int q2[], int d)
 {
-	int x,
-		n = 1;
+	int x;
 	switch (d)
 	{
 	case 1:
@@ -165,10 +176,10 @@ bool high_card(int q1[], int q2[], int d)
 
 	case 2:
 		x = 2;
-		n = 2;
 		break;
 
 	case 3:
+	case 6:
 		x = 3;
 		break;
 
@@ -192,6 +203,12 @@ bool high_card(int q1[], int q2[], int d)
 		else
 			if (q1[i] == x || q2[i] == x)
 				return (q1[i] == x);
+	}
+
+	if (x == 2) return high_card(q1, q2, 0);
+	else {
+		draw = true;
+		return true;
 	}
 }
 
@@ -245,7 +262,7 @@ void replacing(int player[][13], int distribution, int quality[], int colour[], 
 			}
 		}
 		else column = 12;
-	
+
 	for (int i = 0; i < counter; i++)
 	{
 		int row, column;
