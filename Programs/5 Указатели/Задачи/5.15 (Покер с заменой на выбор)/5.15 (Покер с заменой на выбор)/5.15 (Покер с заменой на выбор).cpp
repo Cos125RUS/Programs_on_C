@@ -14,6 +14,8 @@ int combinations(int[], int[], const char* []);
 void winner(int, int, int[], int[]);
 void replacing(int[][13], int, int[], int[], int[][13]);
 void change_card(int[][13], int[], int[], int[][13], const char* [], const char* []);
+void chois(const int[][13], const char* [], const char* []);
+void result(int, const char* []);
 
 int main()
 {
@@ -24,43 +26,47 @@ int main()
 							"Восьмёрка", "Девятка", "Десятка", "Валет", "Дама", "Король" };
 	const char* comb[] = { "Старшая карта" ,"Пара", "Две пары", "Тройка", "Стрит", "Флэш", "Фулл-хаус", "Каре", "Стрит-флэш" };
 
-	int player[4][13] = { 0 };
-	int quality_player[13] = { 0 };
-	int colour_player[4] = { 0 };
+	while (true) {
+		int player[4][13] = { 0 };
+		int quality_player[13] = { 0 };
+		int colour_player[4] = { 0 };
 
-	int croupier[4][13] = { 0 };
-	int quality_croupier[13] = { 0 };
-	int colour_croupier[4] = { 0 };
+		int croupier[4][13] = { 0 };
+		int quality_croupier[13] = { 0 };
+		int colour_croupier[4] = { 0 };
 
-	int deck[4][13] = { 0 };
-
-
-	srand(time(0));
-
-	shuffle(player, quality_player, colour_player, deck);
-	shuffle(croupier, quality_croupier, colour_croupier, deck);
-
-	deal(player, croupier, face, suit);
-
-	int estimation_player = combinations(quality_player, colour_player, comb);
-	int estimation_croupier = combinations(quality_croupier, colour_croupier, comb);
-	cout << endl << endl;
-
-	change_card(player, quality_player, colour_player, deck, face, suit);
-	//replacing(player, estimation_player, quality_player, colour_player, deck);
-	replacing(croupier, estimation_croupier, quality_croupier, colour_croupier, deck);
-	deal(player, croupier, face, suit);
-	estimation_player = combinations(quality_player, colour_player, comb);
-	estimation_croupier = combinations(quality_croupier, colour_croupier, comb);
-	cout << endl << endl;
+		int deck[4][13] = { 0 };
 
 
-	winner(estimation_player, estimation_croupier, quality_player, colour_croupier);
+		srand(time(0));
 
+		shuffle(player, quality_player, colour_player, deck);
+		shuffle(croupier, quality_croupier, colour_croupier, deck);
+
+		//deal(player, croupier, face, suit);
+		chois(player, face, suit);
+
+		int estimation_player = combinations(quality_player, colour_player, comb);
+		int estimation_croupier = combinations(quality_croupier, colour_croupier, comb);
+		result(estimation_player, comb);
+		cout << endl << endl;
+
+		change_card(player, quality_player, colour_player, deck, face, suit);
+		//replacing(player, estimation_player, quality_player, colour_player, deck);
+		replacing(croupier, estimation_croupier, quality_croupier, colour_croupier, deck);
+		deal(player, croupier, face, suit);
+		estimation_player = combinations(quality_player, colour_player, comb);
+		estimation_croupier = combinations(quality_croupier, colour_croupier, comb);
+		result(estimation_player, comb);
+		result(estimation_croupier, comb);
+		cout << endl << endl;
+
+		winner(estimation_player, estimation_croupier, quality_player, quality_croupier);
+		cout << endl << endl;
+	}
 
 
 	cout << "\n\n\n\n\n\n\n\n\n\n";
-
 	return 0;
 }
 
@@ -73,7 +79,7 @@ void shuffle(int distribution[][13], int quality[], int colour[], int deck[][13]
 		do {
 			row = rand() % 4;
 			column = rand() % 13;
-		} while (distribution[row][column] != 0 || deck[row][column] != 0);
+		} while (deck[row][column] != 0);
 		distribution[row][column] = card;
 		deck[row][column] = card;
 		++quality[column];
@@ -130,7 +136,7 @@ int combinations(int quality[], int colour[], const char* comb[])
 		if (couple == 2) distribution = 2;
 		else distribution = 1;
 
-	cout << setw(15) << comb[distribution] << setw(10) << '\t';
+	//cout << setw(15) << comb[distribution] << setw(10) << '\t';
 
 	return distribution;
 }
@@ -139,17 +145,18 @@ void winner(int p1, int p2, int quality1[], int quality2[])
 {
 	bool high_card(int[], int[], int);
 
-	if (p1 > p2) cout << "\n\n\n\n\t\t\tPlayqr 1 win!";
+	if (p1 > p2) cout << "\n\n\t\t\tPlayer 1 win!";
 	else
-		if (p2 > p1) cout << "\n\n\n\n\t\t\tPlayqr 2 win!";
+		if (p2 > p1) cout << "\n\n\t\t\tPlayer 2 win!";
 		else
-			if (high_card(quality1, quality2, p1)) cout << "\n\n\n\n\t\t\tPlayqr 1 win!";
-			else cout << "\n\n\n\n\t\t\tPlayqr 2 win!";
+			if (high_card(quality1, quality2, p1)) cout << "\n\n\t\t\tPlayer 1 win!";
+			else cout << "\n\n\t\t\tPlayer 2 win!";
 }
 
 bool high_card(int q1[], int q2[], int d)
 {
-	int x;
+	int x,
+		n = 1;
 	switch (d)
 	{
 	case 1:
@@ -158,6 +165,7 @@ bool high_card(int q1[], int q2[], int d)
 
 	case 2:
 		x = 2;
+		n = 2;
 		break;
 
 	case 3:
@@ -175,13 +183,15 @@ bool high_card(int q1[], int q2[], int d)
 
 	if (q1[0] == x && q2[0] == x);
 	else
-		if (q1[0] == x || q2[0] == x) return q1[0] > q2[0];
+		if (q1[0] == x || q2[0] == x)
+			return (q1[0] == x);
 
 	for (int i = 12; i > 0; i--)
 	{
 		if (q1[i] == x && q2[i] == x);
 		else
-			if (q1[i] == x || q2[i] == x) return q1[0] > q2[0];
+			if (q1[i] == x || q2[i] == x)
+				return (q1[i] == x);
 	}
 }
 
@@ -190,43 +200,70 @@ void replacing(int player[][13], int distribution, int quality[], int colour[], 
 	int change[3] = { 0 };
 	int rows[3] = { 0 };
 	int columns[3] = { 0 };
-	int counter = 0;
+	int counter;
 
-	if (distribution < 4 || distribution == 7)
-		for (int column = 1; column <= 12; column++)
-			if (counter < 3)
-				if (quality[column] == 1)
-					for (int row = 0; row <= 3; row++)
-						if (player[row][column] != 0)
-						{
-							change[counter] = player[row][column];
-							rows[counter] = row;
-							columns[counter] = column;
-							counter++;
-							--quality[column];
-							--colour[row];
-						}
+	switch (distribution)
+	{
+	case 7:
+	case 2:
+		counter = 1;
+		break;
 
-	if (counter > 0)
-		for (int i = 0; i < counter; i++)
+	case 3:
+		counter = 2;
+		break;
+
+	case 1:
+	case 0:
+		counter = 3;
+		break;
+
+	default:
+		counter = 0;
+		break;
+	}
+
+	int i = 0;
+	for (int column = 0; column <= 12; column++)
+		if (i < counter)
 		{
-			int row, column;
-			do {
-				row = rand() % 4;
-				column = rand() % 13;
-			} while (player[row][column] != 0 || deck[row][column] != 0);
-			player[row][column] = change[i];
-			++quality[column];
-			++colour[row];
+			if (quality[column] == 1)
+			{
+				for (int row = 0; row <= 3; row++)
+				{
+					if (player[row][column] > 0)
+					{
+						change[i] = player[row][column];
+						rows[i] = row;
+						columns[i] = column;
+						--quality[column];
+						--colour[row];
+						i++;
+						row = 4;
+					}
+				}
+			}
 		}
-
+		else column = 12;
+	
 	for (int i = 0; i < counter; i++)
+	{
+		int row, column;
+		do {
+			row = rand() % 4;
+			column = rand() % 13;
+		} while (deck[row][column] != 0);
+		player[row][column] = change[i];
+		deck[row][column] = change[i];
+		++quality[column];
+		++colour[row];
 		player[rows[i]][columns[i]] = 0;
+	}
 }
 
 void change_card(int player[][13], int quality[], int colour[], int deck[][13], const char* face[], const char* suit[])
 {
-	int n, 
+	int n,
 		counter = 0;
 
 	void card_replacement(int, int[][13], int[], int[], int[][13]);
@@ -234,11 +271,10 @@ void change_card(int player[][13], int quality[], int colour[], int deck[][13], 
 	for (counter; counter < 3; counter++)
 	{
 		do {
-			cout << "\nWhich card should I change?\nEnter <0> to finish.\n";
+			cout << "\nКакую карту поменять?\nВведите <0>, чтобы закончить.\n";
 			cin >> n;
 		} while (n < 0 || n > 5);
 		card_replacement(n, player, quality, colour, deck);
-		//print(player, face, suit);
 		if (n == 0) counter = 3;
 	}
 }
@@ -265,4 +301,27 @@ void card_replacement(int card, int player[][13], int quality[], int colour[], i
 	deck[row][column] = card;
 	++quality[column];
 	++colour[row];
+}
+
+void chois(const int wDeck[][13], const char* wFace[], const char* wSuit[])
+{
+	for (int card = 1; card <= 5; card++)
+	{
+		for (int row = 0; row <= 3; row++)
+			for (int column = 0; column <= 12; column++)
+				if (wDeck[row][column] == card)
+					cout << setw(10) << setiosflags(ios::right) << wFace[column]
+					<< " масти " << setiosflags(ios::left) << wSuit[row] << setw(10) << "\t\t";
+
+		for (int row = 0; row <= 3; row++)
+			for (int column = 0; column <= 12; column++)
+				if (wDeck[row][column] == card)
+					cout << setw(10) << setiosflags(ios::right) << "Карта " << card << endl;
+	}
+	cout << endl << endl;
+}
+
+void result(int distribution, const char* comb[])
+{
+	cout << setw(15) << comb[distribution] << setw(10) << '\t';
 }
