@@ -81,13 +81,6 @@ void mazeTravers(char maze[][12], int x, int y, char direction)
 				mazeTravers(maze, x, y - 1, 'l');
 				break;
 
-			case 'u':
-				mazeTravers(maze, x, y + 1, 'r');
-				mazeTravers(maze, x - 1, y, 'u');
-				mazeTravers(maze, x, y - 1, 'l');
-				mazeTravers(maze, x + 1, y, 'd');
-				break;
-
 			case 'd':
 				mazeTravers(maze, x, y - 1, 'l');
 				mazeTravers(maze, x + 1, y, 'd');
@@ -100,6 +93,13 @@ void mazeTravers(char maze[][12], int x, int y, char direction)
 				mazeTravers(maze, x, y - 1, 'l');
 				mazeTravers(maze, x + 1, y, 'd');
 				mazeTravers(maze, x, y + 1, 'r');
+				break;
+
+			case 'u':
+				mazeTravers(maze, x, y + 1, 'r');
+				mazeTravers(maze, x - 1, y, 'u');
+				mazeTravers(maze, x, y - 1, 'l');
+				mazeTravers(maze, x + 1, y, 'd');
 				break;
 			}
 		}
