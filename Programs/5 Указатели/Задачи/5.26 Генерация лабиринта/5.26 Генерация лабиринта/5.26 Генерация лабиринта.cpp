@@ -10,9 +10,9 @@
 
 using namespace std;
 
-void print_array(char[][12]);
-void mazeTravers(char[][12], int, int);
-void mazeGenerator(char[][12]);
+void print_array(char[][20]);
+void mazeTravers(char[][20], int, int);
+void mazeGenerator(char[][20]);
 
 bool flag = false;
 
@@ -22,7 +22,7 @@ int main()
 
 	srand(time(0));
 
-	char maze[12][12];
+	char maze[20][20];
 
 
 	mazeGenerator(maze);
@@ -35,27 +35,27 @@ int main()
 	return 0;
 }
 
-void print_array(char maze[][12])
+void print_array(char maze[][20])
 {
 	cout << endl << endl;
 
-	for (int i = 0; i < 12; i++)
+	for (int i = 0; i < 20; i++)
 	{
 		cout << setw(5) << ' ';
-		for (int j = 0; j < 12; j++)
+		for (int j = 0; j < 20; j++)
 			cout << maze[i][j];
 		cout << endl;
 	}
 	cout << endl << endl;
 }
 
-void mazeTravers(char maze[][12], int x, int y)
+void mazeTravers(char maze[][20], int x, int y)
 {
-	if (maze[x][y] != '#' && maze[x][y] != 'X')
+	if (maze[x][y] != '#' && maze[x][y] != 'x')
 	{
-		maze[x][y] = 'X';
+		maze[x][y] = 'x';
 
-		if (y == 11)
+		if (y == 19)
 			flag = true;
 		else
 		{
@@ -67,9 +67,9 @@ void mazeTravers(char maze[][12], int x, int y)
 	}
 }
 
-void mazeGenerator(char maze[][12])
+void mazeGenerator(char maze[][20])
 {
-	void fillMaze(char[][12]);
+	void fillMaze(char[][20]);
 
 	while (!flag)
 	{
@@ -80,25 +80,25 @@ void mazeGenerator(char maze[][12])
 
 		maze[x][0] = '.';
 		maze[x][1] = '.';
-		maze[y][11] = '.';
-		maze[y][10] = '.';
+		maze[y][19] = '.';
+		maze[y][18] = '.';
 
 		mazeTravers(maze, x, 1);
 	}
 }
 
-void fillMaze(char maze[][12])
+void fillMaze(char maze[][20])
 {
-	for (int i = 0; i < 12; i++)
+	for (int i = 0; i < 20; i++)
 	{
 		maze[0][i] = '#';
-		maze[11][i] = '#';
+		maze[19][i] = '#';
 		maze[i][0] = '#';
-		maze[i][11] = '#';
+		maze[i][19] = '#';
 	}
 	
-	for (int i = 1; i < 11; i++)
-		for (int j = 1; j < 11; j++)
-			if (rand() % 2 == 0) maze[i][j] = '.';
+	for (int i = 1; i < 19; i++)
+		for (int j = 1; j < 19; j++)
+			if (rand() % 10 > 4) maze[i][j] = '.';
 			else maze[i][j] = '#';
 }
