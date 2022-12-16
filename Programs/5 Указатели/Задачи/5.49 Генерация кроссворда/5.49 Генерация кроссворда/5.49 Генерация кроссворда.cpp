@@ -13,92 +13,187 @@ using namespace std;
 
 enum Derection { HORIZONTAL, VERTICAL };
 
+int success[500];
+int index = 0;
+
+const char* answers[] = { "buckingham", "museum", "westminster", "trafalgard", "nelson", "bigban", "national", "rawens" };
+
+void frame(char crossword[20][20])
+{
+    for (int i = 0; i < 20; i++)
+    {
+        crossword[i][0] = '*';
+        crossword[i][19] = '*';
+        crossword[0][i] = '*';
+        crossword[19][i] = '*';
+    }    
+};
+
 void print(char crossword[20][20])
 {
     for (int i = 0; i < 20; i++)
-        for (int j = 0; j < 20; j++)
-            cout << crossword[i][j];
+	{
+		for (int j = 0; j < 20; j++)
+			cout << crossword[i][j];
+
+		cout << endl;
+	}
 };
 
-void clear(char crossword[20][20], char updateCrossword[20][20])
+void clear(char updateCrossword[20][20], char crossword[20][20])
 {
     for (int i = 0; i < 20; i++)
         for (int j = 0; j < 20; j++)
             updateCrossword[i][j] = crossword[i][j];
 };
 
-void createCrossword(char crossword[20][20], const char* answers[], int word, Derection line)
+bool check(const char* word, const char* field, const int* length)
 {
-    int length = strlen(answers[word]);
-    char updateCrossword[20][20] = { "" };
-    clear(crossword, updateCrossword);
+	bool contact = false;
+    for (int i = 0; i < *length; i++)
+    {
+        if (!contact)
+            contact = (word[i] == field[i]);
 
-	bool allGood = true;
-    bool nextWord = false;
-    for (int i = 0; i < 20; i++)
-        for (int j = 0; j < 20 - length; j++)
-        {
-            if (!nextWord) {
-                allGood = true;
-                for (int k = 0; k < length; k++)
-                    if (allGood)
-                    {
-                        if (line == HORIZONTAL)
-                        {
-                            if (crossword[i][j + k] == 0 || (crossword[i][j + k] == answers[word][k] && crossword[i][j + k + 1] == 0))
-                                updateCrossword[i][j + k] = answers[word][k];
-                            else
-                            {
-                                allGood = false;
-                                clear(crossword, updateCrossword);
-                            }
-                        }
-                        else
-                            if (crossword[j + k][i] == 0 || (crossword[j + k][i] == answers[word][k] && crossword[j + k + 1][i] == 0))
-                                updateCrossword[j + k][i] = answers[word][k];
-                            else
-                            {
-                                allGood = false;
-                                clear(crossword, updateCrossword);
-                            }
-                    }
-                if (allGood)
-                {
-                    for (int k = 0; k < length; k++)
-                        if (line == HORIZONTAL)
-                            crossword[i][j + k] = updateCrossword[i][j + k];
-                        else
-                            crossword[j + k][i] = updateCrossword[j + k][i];
-                    
-                    clear(crossword, updateCrossword);
-                    word++;
-                    nextWord = true;
-                    if (line == HORIZONTAL)
-                        line = VERTICAL;
-                    else 
-                        line = HORIZONTAL;
-                }
-            }
-        }
+        if ((field[i] == 0) || ((word[i] == field[i]) && (word[i - 1] != field[i - 1]) && (word[i + 1] != field[i + 1])));
+        else
+            return false;
+    }
 
-    if (word < 8)
-        createCrossword(crossword, answers, word, line);
-    else
+    if (contact)
+        return true;
+    else 
+        return false;
+};
+
+bool parallelLines(char crossword[20][20], const int* length, const int* row, const int* column, Derection line)
+{
+    bool flag = true;
+
+	if (line == HORIZONTAL)
+	{
+        if (*column > 1)
+			flag = (crossword[*row][*column - 1] == 0);
+		if (flag && (*column + *length < 19))
+			flag = (crossword[*row][*column + *length + 1] == 0);
+
+		
+			for (int i = *column; i < *column + *length - 1; i++)
+                if (flag) 
+				{
+					if (*row > 1)
+						flag = ((crossword[*row - 1][i] == 0) || (crossword[*row - 1][i + 1] == 0));
+					if (*row < 19)
+						flag = ((crossword[*row + 1][i] == 0) || (crossword[*row + 1][i + 1] == 0));
+				}
+	}
+	else
+	{
+		if (*row > 1)
+            flag = (crossword[*row - 1][*column] == 0);
+		if (flag && (*row + *length < 19))
+			flag = (crossword[*row + *length + 1][*column] == 0);
+
+			for (int i = *row; i < *row + *length - 1; i++)
+                if (flag)
+				{
+					if (*column > 1)
+						flag = ((crossword[i][*column - 1] == 0) || (crossword[i + 1][*column - 1] == 0));
+					if (*column < 19)
+						flag = ((crossword[i][*column + 1] == 0) || (crossword[i + 1][*column + 1] == 0));
+				}
+    }
+
+    return flag;
+};
+
+void horizontalCopy(char* field, const char* word, const int* length)
+{
+    for (int i = 0; i < *length; i++)
+        field[i] = word[i];
+};
+
+void verticalCopy(char field[20][20], const char* word, const int* length, const int* row, const int* column)
+{
+    for (int i = 0; i < *length; i++)
+        field[*row+i][*column] = word[i];
+};
+
+void vertical(char crossword[20][20], char* field, const int* column)
+{
+    for (int i = 1; i < 19; i++)
+        field[i] = crossword[i][*column];
+};
+
+void createCrossword(char crossword[20][20], int word, Derection line)
+{
+    if (word == 8)
+    {
         print(crossword);
+        cout << "\nSTOP!\n\n";
+        cin >> success[index++];
+    }
+    else
+    {
+        int length = strlen(answers[word]);
+        char updateCrossword[20][20] = { "" };
+
+        if (line == HORIZONTAL)
+        {
+            for (int i = 1; i < 19; i++)
+                for (int j = 1; j < 19 - length; j++)
+                    if (check(answers[word], &crossword[i][j], &length))
+                        if (parallelLines(crossword, &length, &i, &j, line))
+						{
+							clear(updateCrossword, crossword);
+							horizontalCopy(&updateCrossword[i][j], answers[word], &length);
+							createCrossword(updateCrossword, word + 1, VERTICAL);
+						}
+        }
+        else //(line == VERTICAL)
+            for (int j = 1; j < 19; j++)
+            {
+                char fildLine[20];
+                vertical(crossword, fildLine, &j);
+                for (int i = 1; i < 19 - length; i++)
+                    if (check(answers[word], fildLine+i, &length))
+                        if (parallelLines(crossword, &length, &i, &j, line))
+						{
+							clear(updateCrossword, crossword);
+							verticalCopy(updateCrossword, answers[word], &length, &i, &j);
+							createCrossword(updateCrossword, word + 1, HORIZONTAL);
+						}
+            }
+    }
+
 };
 
 int main()
 {
     setlocale(LC_ALL, "Russian");
 
-    const char* answers[] = { "buckingham", "museum", "westminster", "trafalgard", "nelson", "bigban", "national", "rawens" };
-	char crossword[20][20] = { "" };
+    char crossword[20][20] = { "" };
     Derection line = HORIZONTAL;
 
+    frame(crossword);
+
+    int length = strlen(answers[0]);
+    char updateCrossword[20][20] = { "" };
+
+    for (int j = 1; j < 19 - length; j++)
+    {
+        char fildLine[20];
+        vertical(crossword, fildLine, &j);
+
+        for (int i = 1; i < 19; i++)
+        {
+			clear(updateCrossword, crossword);
+            verticalCopy(updateCrossword, answers[0], &length, &i, &j);
+            createCrossword(updateCrossword, 1, line);
+        }
+    }
+
     
-    createCrossword(crossword, answers, 0, line);
-
-
 
 
 
