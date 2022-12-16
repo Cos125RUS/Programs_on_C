@@ -75,15 +75,14 @@ bool parallelLines(char crossword[20][20], const int* length, const int* row, co
         if (*column > 1)
 			flag = (crossword[*row][*column - 1] == 0);
 		if (flag && (*column + *length < 19))
-			flag = (crossword[*row][*column + *length + 1] == 0);
+			flag = (crossword[*row][*column + *length] == 0);
 
-		
-			for (int i = *column; i < *column + *length - 1; i++)
-                if (flag) 
+        if (flag)
+			for (int i = *column; i < *column + *length; i++)
 				{
-					if (*row > 1)
+					if (flag && (*row > 1))
 						flag = ((crossword[*row - 1][i] == 0) || (crossword[*row - 1][i + 1] == 0));
-					if (*row < 19)
+					if (flag && (*row < 19))
 						flag = ((crossword[*row + 1][i] == 0) || (crossword[*row + 1][i + 1] == 0));
 				}
 	}
@@ -92,14 +91,14 @@ bool parallelLines(char crossword[20][20], const int* length, const int* row, co
 		if (*row > 1)
             flag = (crossword[*row - 1][*column] == 0);
 		if (flag && (*row + *length < 19))
-			flag = (crossword[*row + *length + 1][*column] == 0);
+			flag = (crossword[*row + *length][*column] == 0);
 
-			for (int i = *row; i < *row + *length - 1; i++)
-                if (flag)
+        if (flag)
+            for (int i = *row; i < *row + *length; i++)
 				{
-					if (*column > 1)
+					if (flag && (*column > 1))
 						flag = ((crossword[i][*column - 1] == 0) || (crossword[i + 1][*column - 1] == 0));
-					if (*column < 19)
+					if (flag && (*column < 19))
 						flag = ((crossword[i][*column + 1] == 0) || (crossword[i + 1][*column + 1] == 0));
 				}
     }
@@ -111,12 +110,21 @@ void horizontalCopy(char* field, const char* word, const int* length)
 {
     for (int i = 0; i < *length; i++)
         field[i] = word[i];
+
+    if (field[-1] != '*') field[-1] = '\0';
+    if (field[*length] != '*') field[*length] = '\0';
 };
 
 void verticalCopy(char field[20][20], const char* word, const int* length, const int* row, const int* column)
 {
     for (int i = 0; i < *length; i++)
         field[*row+i][*column] = word[i];
+
+    if (*row > 1)
+        field[*row - 1][*column] = '\0';
+
+    if (*row + *length < 19)
+        field[*row + *length][*column] = '\0';
 };
 
 void vertical(char crossword[20][20], char* field, const int* column)
@@ -151,7 +159,7 @@ void createCrossword(char crossword[20][20], int word, Derection line)
 						}
         }
         else //(line == VERTICAL)
-            for (int j = 1; j < 19; j++)
+            for (int j = 1; j < 19 ; j++)
             {
                 char fildLine[20];
                 vertical(crossword, fildLine, &j);
@@ -180,12 +188,12 @@ int main()
     int length = strlen(answers[0]);
     char updateCrossword[20][20] = { "" };
 
-    for (int j = 1; j < 19 - length; j++)
+    for (int j = 1; j < 19 ; j++)
     {
         char fildLine[20];
         vertical(crossword, fildLine, &j);
 
-        for (int i = 1; i < 19; i++)
+        for (int i = 1; i < 19 - length; i++)
         {
 			clear(updateCrossword, crossword);
             verticalCopy(updateCrossword, answers[0], &length, &i, &j);
