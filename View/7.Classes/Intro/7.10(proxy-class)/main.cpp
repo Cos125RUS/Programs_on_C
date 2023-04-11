@@ -9,16 +9,19 @@
 #include <errno.h>
 #include <ctype.h>
 
+#include "Interface.h"
+
 using namespace std;
 
 int main()
 {
     setlocale(LC_ALL, "Russian");
 
-    Building building;
-    building.runSimulation;
+    Interface i(5);
 
-
+    cout << "Интерфейс содержит: " << i.getValue() << " до setValue\n";
+    i.setValue(10);
+    cout << "Интерфейс содержит: " << i.getValue() << " после setValue\n";
 
 
 
@@ -26,6 +29,4 @@ int main()
 
 
     cout << "\n\n\n\n\n\n\n\n\n\n";
-
-    return 0;
 }

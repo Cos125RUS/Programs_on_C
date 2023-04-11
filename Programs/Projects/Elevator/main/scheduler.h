@@ -10,10 +10,12 @@ public:
 	~Scheduler();
 	void processTime(int);
 private:
-	void sheduleTime(Floor&);
+	void scheduleTime(const Floor&);
+	void delayTime(const Floor&);
+	void createNewPerson(Floor&);
+	void handleArrivals(Floor&, int);
 
-	void delayTime(Floor&);
-
+	int currentClockTime;
 	Floor& floor1Ref;
 	Floor& floor2Ref;
 	int floor1ArrivalTime;

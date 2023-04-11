@@ -20,9 +20,9 @@
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>16.0</VCProjectVersion>
-    <ProjectGuid>{0EBD4FDE-1D6C-4262-942E-1A80BFBAE24E}</ProjectGuid>
+    <ProjectGuid>{3142D1E4-6390-41BD-8DA7-0F0AEEAB14CA}</ProjectGuid>
     <Keyword>Win32Proj</Keyword>
-    <RootNamespace>main</RootNamespace>
+    <RootNamespace>My77Date</RootNamespace>
     <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
@@ -147,31 +147,11 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="bell.cpp" />
-    <ClCompile Include="building.cpp" />
-    <ClCompile Include="clock.cpp" />
-    <ClCompile Include="door.cpp" />
-    <ClCompile Include="elevator.cpp" />
-    <ClCompile Include="elevatorButton.cpp" />
-    <ClCompile Include="floor.cpp" />
-    <ClCompile Include="floorButton.cpp" />
-    <ClCompile Include="light.cpp" />
-    <ClCompile Include="elevatorSimulation.cpp" />
-    <ClCompile Include="person.cpp" />
-    <ClCompile Include="scheduler.cpp" />
+    <ClCompile Include="main.cpp" />
+    <ClCompile Include="Date.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="bell.h" />
-    <ClInclude Include="building.h" />
-    <ClInclude Include="clock.h" />
-    <ClInclude Include="door.h" />
-    <ClInclude Include="elevator.h" />
-    <ClInclude Include="elevatorButton.h" />
-    <ClInclude Include="floor.h" />
-    <ClInclude Include="floorButton.h" />
-    <ClInclude Include="light.h" />
-    <ClInclude Include="person.h" />
-    <ClInclude Include="scheduler.h" />
+    <ClInclude Include="Date.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
