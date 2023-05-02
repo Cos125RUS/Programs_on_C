@@ -5,6 +5,7 @@
 #include <cstdlib>
 #include <ctime>
 #include <cstddef>
+#include <cassert>
 #include <string.h>
 #include <errno.h>
 #include <ctype.h>
