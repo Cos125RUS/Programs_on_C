@@ -142,10 +142,10 @@ istream& operator>>(istream& input, RationalNumber& c)
 	strtok_s(text, "/", &den);
 	char* num = &text[0];
 	int n = 0, d = 0;
-	for (int i = strlen(num) - 1, j = 1; i >= 0; i--, j++)
-		n += (num[i] - 48) * j;
-	for (int i = strlen(den) - 1, j = 1; i >= 0; i--, j++)
-		d += (den[i] - 48) * j;
+	for (int i = strlen(num) - 1, j = 0; i >= 0; i--, j++)
+		n += (num[i] - 48) * pow(10, j);
+	for (int i = strlen(den) - 1, j = 0; i >= 0; i--, j++)
+		d += (den[i] - 48) * pow(10, j);
 
 	c.numerator = n;
 	c.denominator = d;
