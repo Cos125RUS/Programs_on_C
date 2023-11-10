@@ -10,7 +10,6 @@
 #include <errno.h>
 #include <ctype.h>
 #include <cstring>
-#include "Point.h"
 
 using namespace std;
 
@@ -18,9 +17,22 @@ int main()
 {
     setlocale(LC_ALL, "Russian");
 
-    Point p(12, 11);
-    cin >> p;
-    cout << p;
+    char buffer[100];
+    int size = 0;
+    char c;
+    while ((c = cin.get()) != '\n' && size < 100) {
+        buffer[size++] = c;
+    }
+
+    cout.setf(ios::adjustfield);
+    cout.fill('*');
+    cout.width(size * 2);
+    cout << setw(size / 2) << "";
+    cout.write(buffer, size);
+    cout << setw(size / 2) << "";
+
+
+
 
 
 
