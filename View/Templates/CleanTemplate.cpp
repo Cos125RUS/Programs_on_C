@@ -10,6 +10,12 @@
 #include <errno.h>
 #include <ctype.h>
 #include <cstring>
+#include <csetjmp>
+#include <exception>
+#include <stdexcept>
+#include <new>
+#include <stdlib.h>
+#include <memory>
 
 using namespace std;
 
