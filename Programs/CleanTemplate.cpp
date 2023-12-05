@@ -16,6 +16,7 @@
 #include <new>
 #include <stdlib.h>
 #include <memory>
+#include <fstream>
 
 using namespace std;
 
