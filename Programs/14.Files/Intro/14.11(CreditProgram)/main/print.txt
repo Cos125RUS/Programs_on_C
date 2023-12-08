@@ -1,0 +1,6 @@
+Счёт      Фамилия         Имя           Баланс
+29        Brown           Nancy         -24.54
+33        Dunn            Stacey        314.33
+37        Barker          Doug           10.52
+1834156032ith             ve              0.00
+1951596544one             m               0.00
